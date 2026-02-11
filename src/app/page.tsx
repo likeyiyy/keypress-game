@@ -26,7 +26,7 @@ const TEXT_TO_FILENAME: Record<string, string> = {
   "左方括号": "5bCP5pa55ous5Y_3", "右方括号": "5Yig6Zmk5ous5Y_3", "左花括号": "5bCP6Iqx5ous5Y_3",
   "右花括号": "5Yig6Zmk6Iqx5ous5Y_3", "反斜杠": "5Y_M5byV5Y_3", "竖线": "562V5bqm",
   "分号": "5Y_l5ous5Y_3", "冒号": "5pa55ous5Y_3", "单引号": "5ZSQ5Y_35Y_3", "双引号": "5Y_N5byV5Y_3",
-  "逗号": "6KGM5Y_3", "句号": "5Y2z5pa55Y_3", "斜杠": "5pWF5Y_3", "小于号": "5bCP5LiO5Y_3",
+  "逗号": "6YCX5Y_3", "句号": "5Y_l5Y_3", "斜杠": "5pac5p2g", "小于号": "5bCP5LiO5Y_3",
   "大于号": "5aSn5LiO5Y_3", "问号": "6Zeu5Y_3",
   // F键
   "F一": "RuS4gA", "F二": "RuS6jA", "F三": "RuS4iQ", "F四": "RuWbmw",
