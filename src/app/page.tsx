@@ -135,6 +135,9 @@ export default function Home() {
         speakText = mapping.speak;
       } else if (numMap[displayKey]) {
         speakText = numMap[displayKey];
+      } else if (/^[a-zA-Z]$/.test(displayKey)) {
+        // 字母统一用大写来查找音频
+        speakText = displayKey.toUpperCase();
       }
 
       // 先显示和播放，再退出全屏（Esc 会触发浏览器退出全屏）
