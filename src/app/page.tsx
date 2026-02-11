@@ -2,43 +2,65 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 
+// 预计算所有文本到文件名的映射
+const TEXT_TO_FILENAME: Record<string, string> = {
+  // 字母
+  "A": "QQ", "B": "Qg", "C": "Qw", "D": "RA", "E": "RQ", "F": "Rg", "G": "Rw",
+  "H": "SA", "I": "SQ", "J": "Sg", "K": "Sw", "L": "TA", "M": "TQ", "N": "Tg",
+  "O": "Tw", "P": "UA", "Q": "UQ", "R": "Ug", "S": "Uw", "T": "VA", "U": "VQ",
+  "V": "Vg", "W": "Vw", "X": "WA", "Y": "WQ", "Z": "Wg",
+  // 数字
+  "0": "MA", "1": "MQ", "2": "Mg", "3": "Mw", "4": "NA", "5": "NQ",
+  "6": "Ng", "7": "Nw", "8": "OA", "9": "OQ",
+  // 特殊键（中文）
+  "空格": "56aB5Y_3", "回车": "5Zue5Y_3", "退出": "5Y1p5b2i", "退格": "6YCA5qC8",
+  "Tab": "VGFi", "Shift": "U2hpZnQ", "Control": "Q29udHJvbA", "Alt": "QWx0",
+  "大写锁定": "5aSn5YaZ6ZSB5a6a", "上": "5LiK", "下": "5LiL", "左": "5bem",
+  "右": "5YWr", "删除": "5oa_5Y_3", "插入": "5oa_5paw", "行首": "6KGM5bC_",
+  "行尾": "6KGM6aaW", "上页": "5LiL6aG1", "下页": "5LiK6aG1",
+  // 符号
+  "反引号": "5YiG5Y_3", "波浪号": "5rOi5rWq5Y_3", "感叹号": "5o2i5oyh", "艾特": "6Im_54m5",
+  "井号": "5LqU5Y_3", "美元": "562J5Y_3", "百分号": "5Y2V5byV5Y_3", "脱字符": "6ISx5a2X56ym",
+  "和号": "5ZKM5Y_3", "星号": "5pif5Y_3", "左括号": "5bCP5LqO5Y_3", "右括号": "5Yig6Zmk5Y_3",
+  "减号": "5pWP5Y_3", "下划线": "5LiL5YiS57q", "等号": "56uW57q", "加号": "5Y_l5Y_3",
+  "左方括号": "5bCP5pa55ous5Y_3", "右方括号": "5Yig6Zmk5ous5Y_3", "左花括号": "5bCP6Iqx5ous5Y_3",
+  "右花括号": "5Yig6Zmk6Iqx5ous5Y_3", "反斜杠": "5Y_M5byV5Y_3", "竖线": "562V5bqm",
+  "分号": "5Y_l5ous5Y_3", "冒号": "5pa55ous5Y_3", "单引号": "5ZSQ5Y_35Y_3", "双引号": "5Y_N5byV5Y_3",
+  "逗号": "6KGM5Y_3", "句号": "5Y2z5pa55Y_3", "斜杠": "5pWF5Y_3", "小于号": "5bCP5LiO5Y_3",
+  "大于号": "5aSn5LiO5Y_3", "问号": "6Zeu5Y_3",
+  // F键
+  "F一": "RuS4gA", "F二": "RuS4gw", "F三": "RuS4iQ", "F四": "RuS5nQ",
+  "F五": "RuS6jA", "F六": "RuS6lA", "F七": "RuWFqw", "F八": "RuWFrQ",
+  "F九": "RuWNgQ", "F十": "RuWNgeS4gA", "F十一": "RuWNgeS6jA", "F十二": "RuWbmw",
+};
+
 export default function Home() {
   const [key, setKey] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const lastPlayTime = useRef(0);
 
-  // 文件名编码函数（与生成时一致）
-  const encodeFilename = useCallback((text: string) => {
-    // 浏览器用 btoa，需要先把中文转成 UTF-8 字节
-    const bytes = new TextEncoder().encode(text);
-    let binary = "";
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary).replace(/[=/]/g, "_");
-  }, []);
-
-  // 播放语音 - 直接访问 public 目录下的静态文件
   const speak = useCallback((text: string) => {
     const now = Date.now();
     if (now - lastPlayTime.current < 100) return;
     lastPlayTime.current = now;
 
-    const filename = encodeFilename(text);
-    const url = `/audio/${filename}.mp3`;
+    const filename = TEXT_TO_FILENAME[text];
+    if (!filename) {
+      console.log("No audio for:", text);
+      return;
+    }
 
+    const url = `/audio/${filename}.mp3`;
     const audio = new Audio(url);
     audio.play().catch(console.error);
-  }, [encodeFilename]);
+  }, []);
 
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      // 阻止所有功能键的默认行为
       if (e.key.startsWith("F") && /^F\d+$/.test(e.key)) {
         e.preventDefault();
       }
 
-      // Ctrl+G 或 Esc 或 Meta 退出全屏
       if ((e.key === "g" && e.ctrlKey) || e.key === "Escape" || e.key === "Meta") {
         if (document.fullscreenElement) {
           document.exitFullscreen();
@@ -149,20 +171,10 @@ export default function Home() {
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  const enterFullscreen = () => {
-    document.documentElement.requestFullscreen();
-  };
-
-  const exitFullscreen = () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    }
-  };
-
   return (
     <div
       className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-800"
-      onClick={!isFullscreen ? enterFullscreen : exitFullscreen}
+      onClick={!isFullscreen ? () => document.documentElement.requestFullscreen() : () => document.exitFullscreen()}
     >
       {!isFullscreen ? (
         <div className="text-center">
