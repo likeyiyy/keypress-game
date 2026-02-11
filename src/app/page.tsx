@@ -5,40 +5,31 @@ import { useState, useEffect, useCallback, useRef } from "react";
 export default function Home() {
   const [key, setKey] = useState<string | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const audioCache = useRef<Map<string, string>>(new Map());
   const lastPlayTime = useRef(0);
 
-  // 预加载所有按键音频
-  useEffect(() => {
-    const keysToPreload = [
-      ...["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-      ..."0123456789",
-      "空格", "回车", "退出", "退格", "Tab", "Shift", "Control", "Alt",
-      "大写锁定", "上", "下", "左", "右", "删除", "插入", "Home", "End",
-    ];
-
-    keysToPreload.forEach((key) => {
-      const url = `/api/tts?text=${encodeURIComponent(key)}`;
-      audioCache.current.set(key, url);
-      const audio = new Audio(url);
-      audio.preload = "auto";
-    });
+  // 文件名编码函数（与生成时一致）
+  const encodeFilename = useCallback((text: string) => {
+    // 浏览器用 btoa，需要先把中文转成 UTF-8 字节
+    const bytes = new TextEncoder().encode(text);
+    let binary = "";
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary).replace(/[=/]/g, "_");
   }, []);
 
+  // 播放语音 - 直接访问 public 目录下的静态文件
   const speak = useCallback((text: string) => {
     const now = Date.now();
     if (now - lastPlayTime.current < 100) return;
     lastPlayTime.current = now;
 
-    let url = audioCache.current.get(text);
-    if (!url) {
-      url = `/api/tts?text=${encodeURIComponent(text)}`;
-      audioCache.current.set(text, url);
-    }
+    const filename = encodeFilename(text);
+    const url = `/audio/${filename}.mp3`;
 
     const audio = new Audio(url);
     audio.play().catch(console.error);
-  }, []);
+  }, [encodeFilename]);
 
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
@@ -136,11 +127,9 @@ export default function Home() {
       } else if (numMap[displayKey]) {
         speakText = numMap[displayKey];
       } else if (/^[a-zA-Z]$/.test(displayKey)) {
-        // 字母统一用大写来查找音频
         speakText = displayKey.toUpperCase();
       }
 
-      // 先显示和播放，再退出全屏（Esc 会触发浏览器退出全屏）
       setKey(displayKey);
       speak(speakText);
     },
