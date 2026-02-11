@@ -47,13 +47,11 @@ export default function Home() {
         e.preventDefault();
       }
 
-      // Ctrl+G 退出全屏
-      if (e.key === "g" && e.ctrlKey) {
-        e.preventDefault();
+      // Ctrl+G 或 Esc 或 Meta 退出全屏
+      if ((e.key === "g" && e.ctrlKey) || e.key === "Escape" || e.key === "Meta") {
         if (document.fullscreenElement) {
           document.exitFullscreen();
         }
-        return;
       }
 
       let displayKey = e.key;
@@ -183,7 +181,7 @@ export default function Home() {
       ) : (
         <div className="flex flex-col items-center justify-center">
           {key ? (
-            <div className="text-white text-[20rem] font-bold leading-none select-none drop-shadow-2xl animate-bounce">
+            <div className="text-white text-[28rem] font-bold leading-none select-none drop-shadow-2xl animate-bounce">
               {key}
             </div>
           ) : (
