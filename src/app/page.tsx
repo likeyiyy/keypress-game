@@ -132,12 +132,14 @@ export default function Home() {
       };
 
       if (specialKeys[displayKey]) {
-        displayKey = specialKeys[displayKey].display;
-        speakText = specialKeys[displayKey].speak;
+        const mapping = specialKeys[displayKey];
+        displayKey = mapping.display;
+        speakText = mapping.speak;
       } else if (numMap[displayKey]) {
         speakText = numMap[displayKey];
       }
 
+      // 先显示和播放，再退出全屏（Esc 会触发浏览器退出全屏）
       setKey(displayKey);
       speak(speakText);
     },
