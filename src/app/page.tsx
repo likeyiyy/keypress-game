@@ -29,9 +29,9 @@ const TEXT_TO_FILENAME: Record<string, string> = {
   "逗号": "6KGM5Y_3", "句号": "5Y2z5pa55Y_3", "斜杠": "5pWF5Y_3", "小于号": "5bCP5LiO5Y_3",
   "大于号": "5aSn5LiO5Y_3", "问号": "6Zeu5Y_3",
   // F键
-  "F一": "RuS4gA", "F二": "RuS4gw", "F三": "RuS4iQ", "F四": "RuS5nQ",
-  "F五": "RuS6jA", "F六": "RuS6lA", "F七": "RuWFqw", "F八": "RuWFrQ",
-  "F九": "RuWNgQ", "F十": "RuWNgeS4gA", "F十一": "RuWNgeS6jA", "F十二": "RuWbmw",
+  "F一": "RuS4gA", "F二": "RuS6jA", "F三": "RuS4iQ", "F四": "RuWbmw",
+  "F五": "RuS6lA", "F六": "RuWFrQ", "F七": "RuS4gw", "F八": "RuWFqw",
+  "F九": "RuS5nQ", "F十": "RuWNgQ", "F十一": "RuWNgeS4gA", "F十二": "RuWNgeS6jA",
 };
 
 export default function Home() {
